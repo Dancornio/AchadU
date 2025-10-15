@@ -1,14 +1,10 @@
-# app/core/db.py
-
 import re
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base
 
-# --- ESTA É A LINHA CORRIGIDA ---
-# Importa 'settings' a partir do caminho completo do pacote 'app'
 from app.core.config import settings
 
-# O resto do seu código, que está funcional
+
 ASYNC_DATABASE_URL = re.sub(
     r"^postgresql://",
     "postgresql+asyncpg://",
