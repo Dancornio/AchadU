@@ -1,0 +1,13 @@
+# Ignorar o arquivo de segredos e variáveis de ambiente
+.env
+
+# Ignorar o ambiente virtual do Python
+.venv/
+venv/
+
+# Ignorar os arquivos de cache compilados do Python
+__pycache__/
+*.pyc
+
+# Outros arquivos comuns de sistema
+.DS_Store
