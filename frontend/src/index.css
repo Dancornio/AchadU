@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+/* Tokens de tema para Tailwind v4 */
+@theme {
+  --color-brand: #3a7bd5; /* cobalt inspirado na imagem l5 */
+  --color-brand-dark: #1f4c9e; /* azul profundo para o gradiente */
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white text-gray-900 antialiased;
+}
+
+/* Foco: clique do mouse não exibe anel */
+*:focus:not(:focus-visible) {
+  @apply outline-none ring-0;
+}
+
+/* Foco de teclado: indicador sutil (não azul) */
+*:focus-visible {
+  @apply outline-none;
+}
+
+/* Inputs: remover borda/anel colorido ao clique e manter foco de teclado sutil */
+@layer base {
+  :where(input[type="text"], input[type="email"], input[type="password"], input[type="search"], input:not([type]), textarea, select):focus:not(:focus-visible) {
+    @apply outline-none ring-0 shadow-none;
+    border-color: rgb(229 231 235) !important; /* gray-200 */
+  }
+
+  :where(input, textarea, select):focus-visible {
+    @apply outline-none ring-2 ring-gray-400/40;
+  }
+}
+
+/* Pequenos refinamentos globais para fluidez */
+:where(button, a) {
+  transition: color .2s ease, background-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+::selection {
+  background: color(display-p3 0.15 0.38 1 / 0.25);
+}
+
+
+/* Google Fonts: fascinate utility */
+
+
+.josefin-sans-test {
+  font-family: "Josefin Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+
+
+/* Fonte de destaque para títulos (Google Fonts: Poppins) */
+.font-heading {
+  font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* Crossfade suave entre duas imagens de fundo no Hero */
+/* Slideshow cíclico com crossfade suave entre 5 camadas */
+@keyframes fadeSlot {
+  0% { opacity: 0; }
+  8% { opacity: 1; }   /* fade-in */
+  20% { opacity: 1; }  /* visível */
+  28% { opacity: 0; }  /* fade-out */
+  100% { opacity: 0; } /* oculto até próximo ciclo */
+}
+/* Duração total do ciclo: 40s (5 slots de 8s) */
+.bg-fade-1 { animation: fadeSlot 40s ease-in-out infinite; animation-delay: 0s; will-change: opacity; }
+.bg-fade-2 { animation: fadeSlot 40s ease-in-out infinite; animation-delay: -8s; will-change: opacity; }
+.bg-fade-3 { animation: fadeSlot 40s ease-in-out infinite; animation-delay: -16s; will-change: opacity; }
+.bg-fade-4 { animation: fadeSlot 40s ease-in-out infinite; animation-delay: -24s; will-change: opacity; }
+.bg-fade-5 { animation: fadeSlot 40s ease-in-out infinite; animation-delay: -32s; will-change: opacity; }
+
+
+

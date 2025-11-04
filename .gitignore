@@ -16,4 +16,16 @@ __pycache__/
 # Outros (pastas de IDE, logs, etc.)
 .idea/
 .vscode/
+
+logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
