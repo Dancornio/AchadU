@@ -85,5 +85,16 @@ body {
 .bg-fade-4 { animation: fadeSlot 40s ease-in-out infinite; animation-delay: -24s; will-change: opacity; }
 .bg-fade-5 { animation: fadeSlot 40s ease-in-out infinite; animation-delay: -32s; will-change: opacity; }
 
+/* Background de Login em telas grandes */
+@media (min-width: 1024px) {
+  .login-page {
+    background-image: url('./assets/IMG/loguinback2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+}
+
 
 

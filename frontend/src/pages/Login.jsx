@@ -36,7 +36,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col bg-linear-to-b from-brand/10 via-indigo-50 to-white">
+    <div className="login-page min-h-dvh flex flex-col bg-linear-to-b from-brand/10 via-indigo-50 to-white lg:bg-none">
       <Header />
       <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative">
         {/* Acenos de cor suaves no fundo */}
@@ -108,7 +108,7 @@ export default function Login() {
                 <div className="relative mt-3 sm:mt-24">
                   <div className="pointer-events-none absolute -top-9 left-0 right-0 flex justify-center" aria-live="polite" aria-atomic="true">
                     {message && (
-                      <p className={`text-xs sm:text-sm rounded-md px-3 py-1 ${message.type==='success' ? 'text-emerald-700' : message.type==='error' ? 'bg-rose-50 ring-rose-200 text-rose-700' : 'bg-indigo-50 ring-indigo-200 text-indigo-700'}`}>{message.text}</p>
+                      <p className={`text-xs sm:text-sm rounded-md px-3 py-1 ${message.type==='success' ? 'text-emerald-700' : message.type==='error' ? 'bg-none ring-rose-200 text-rose-700' : 'bg-indigo-50 ring-indigo-200 text-indigo-700'}`}>{message.text}</p>
                     )}
                   </div>
                   <button
@@ -130,8 +130,7 @@ export default function Login() {
           <aside className="hidden md:block md:col-span-7 xl:col-span-7 relative overflow-hidden rounded-3xl border border-white/30 bg-white/60 backdrop-blur-xl shadow-xl min-h-[420px] sm:min-h-[500px] md:min-h-[560px]">
             {/* Arte de fundo com blobs e barras de gradiente */}
             <div className="absolute inset-0" aria-hidden="true">
-              <div className="absolute -top-16 -left-20 w-64 h-64 rounded-full bg-linear-to-br from-brand to-brand-dark blur-[80px] opacity-40" />
-              <div className="absolute bottom-[-40px] right-[-40px] w-80 h-80 rounded-full bg-linear-to-r from-fuchsia-500 to-pink-500 blur-[96px] opacity-30" />
+              <div className="absolute bottom-[-40px] right-[-40px] w-80 h-80 rounded-full bg-linear-to-r from-blue-100 to-blue-500 blur-[96px] opacity-30" />
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.45)_0%,rgba(255,255,255,0)_60%)]" />
             </div>
 
@@ -142,9 +141,9 @@ export default function Login() {
                 <span>Bem-vindo ao AchadU</span>
               </span>
               <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-gray-900">Encontre, reporte e recupere itens no campus</h2>
-              <p className="mt-2 text-gray-700">Visual moderno, leve e focado no essencial. Feito para uso rápido no dia a dia.</p>
+              <p className="mt-2 text-gray-700">O AchadU procura sempre ser o mais amigável e inclusivo possível.</p>
 
-              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="mt-24 grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <div className="flex items-center gap-2 rounded-xl bg-white/70 px-3 py-2 shadow-sm">
                   <Clock className="h-4 w-4 text-indigo-600" aria-hidden="true" />
                   <span className="text-sm text-gray-800">Rápido</span>

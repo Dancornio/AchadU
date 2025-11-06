@@ -5,22 +5,22 @@ from app.core.db import Base
 class Category(Base):
     __tablename__ = "categories"
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(50), unique=True, not_null=True)
+    name = Column(String(50), unique=True, nullable=False)
     description = Column(Text)
 
 
 class Location(Base):
     __tablename__ = "locations"
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), unique=True, not_null=True)
+    name = Column(String(100), unique=True, nullable=False)
     description = Column(Text)
 
 
 class Item(Base):
     __tablename__ = "items"
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), unique=True, not_null=True)
-    description = Column(Text, not_null=True)
+    name = Column(String(100), unique=True, nullable=False)
+    description = Column(Text, nullable=False)
 
     # chaves estrangeiras
 

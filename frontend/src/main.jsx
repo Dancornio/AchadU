@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
 import App from './App.jsx';
+import { registerSW } from 'virtual:pwa-register'
 
 const User = lazy(() => import('./pages/User.jsx'));
 const Items = lazy(() => import('./pages/Items.jsx'));
@@ -10,6 +11,8 @@ const ItemDetails = lazy(() => import('./pages/ItemDetails.jsx'));
 const Lost = lazy(() => import('./pages/Lost.jsx'));
 const How = lazy(() => import('./pages/How.jsx'));
 const Login = lazy(() => import('./pages/Login.jsx'));
+
+registerSW({ immediate: true })
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
