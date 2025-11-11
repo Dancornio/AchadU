@@ -158,9 +158,12 @@ export default function Login() {
                 </div>
               </div>
 
-              <a href="/como-funciona" className="mt-6 inline-flex items-center gap-2 h-11 px-4 rounded-2xl border border-gray-200 bg-white/70 hover:bg-white text-gray-900 shadow-sm">
+              <a
+                href="/como-funciona"
+                className="mt-6 group inline-flex items-center gap-2 h-11 px-4 rounded-2xl border border-gray-200 bg-white/70 text-gray-900 shadow-sm transform transition-all duration-200 hover:bg-white hover:shadow-md hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+              >
                 Conheça como funciona
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
               </a>
             </div>
           </aside>

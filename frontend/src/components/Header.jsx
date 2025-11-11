@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useState } from 'react';
-import { Home, Grid3x3, HelpCircle, User as UserIcon, Plus, Menu, LogIn } from 'lucide-react';
+import { Home, Grid3x3, HelpCircle, User as UserIcon, Plus, Menu, LogIn, LayoutGrid } from 'lucide-react';
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -19,7 +19,7 @@ export default function Header() {
             <Home className="h-4 w-4" strokeWidth={2} />
           </NavItem>
           <NavItem to="/itens" label="Itens">
-            <Grid3x3 className="h-4 w-4" strokeWidth={2} />
+            <LayoutGrid className="h-4 w-4" strokeWidth={2} />
           </NavItem>
           <NavItem to="/como-funciona" label="Como funciona">
             <HelpCircle className="h-4 w-4" strokeWidth={2} />

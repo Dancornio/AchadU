@@ -1,4 +1,4 @@
-import { Grid3x3, Package, Key, Laptop, Book } from 'lucide-react';
+import { Grip, Package, Key, Laptop, Book } from 'lucide-react';
 
 const palette = {
   all: { idle: 'bg-slate-100 text-slate-700', active: 'bg-gradient-to-r from-slate-700 to-gray-900 text-white' },
@@ -8,7 +8,7 @@ const palette = {
   4: { idle: 'bg-emerald-50 text-emerald-700', active: 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white' },
 };
 
-const icons = { all: Grid3x3, 1: Package, 2: Key, 3: Laptop, 4: Book };
+const icons = { all: Grip, 1: Package, 2: Key, 3: Laptop, 4: Book };
 
 export default function CategoryChips({
   categories,
@@ -36,7 +36,7 @@ export default function CategoryChips({
       {chips.map((ch) => {
         const active = String(value) === String(ch.id);
         const pal = palette[ch.id] || palette.all;
-        const Icon = icons[ch.id] || Grid3x3;
+        const Icon = icons[ch.id] || Grip;
         return (
           <button
             key={ch.id}

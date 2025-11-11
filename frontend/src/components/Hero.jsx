@@ -44,6 +44,7 @@ export default function Hero() {
             <Typewriter
               text="AchadU é o sistema moderno e leve de achados e perdidos do campus. Em poucos segundos, reporte um item ou busque por registros."
               speed={35}
+              className="motion-preset-typewriter-[24]"
             />
           </p>
         </div>

@@ -4,6 +4,7 @@ import ItemCard from '../components/ItemCard';
 import CategoryChips from '../components/CategoryChips';
 import { db } from '../services/db';
 import { useEffect, useMemo, useState, useCallback } from 'react';
+import { Search } from 'lucide-react';
 
 export default function Items({ initialStatus = 'all', title = 'Itens do campus' }) {
   const [query, setQuery] = useState('');
@@ -67,7 +68,23 @@ export default function Items({ initialStatus = 'all', title = 'Itens do campus'
           </div>
           <div className="flex-1 flex flex-col sm:flex-row gap-2">
             <CategoryChips categories={categories} value={categoryId} onChange={setCategoryId} showAll className="w-full lg:w-auto" />
-            <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar por nome/descrição" className="flex-1 h-10 rounded-lg border border-gray-200 px-3 bg-white/80 backdrop-blur-sm focus:outline-none" />
+            <div className="flex items-center gap-2 bg-white border  outline-none border-gray-200 rounded-lg px-3 h-10 transition-all duration-300 focus-within:ring-2 focus-within:ring-gray-200 shadow-md w-full sm:w-[220px] sm:focus-within:w-[280px]">
+              <input
+                type="text"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                placeholder="Buscar por "
+                className="flex-1 bg-transparent outline-none text-gray-900 focus:ring-0  text-sm sm:text-base"
+                aria-label="Buscar itens por nome ou descrição"
+              />
+              <button
+                type="button"
+                className="inline-flex items-center justify-center h-8 w-8 rounded-md text-gray-500 hover:text-gray-700"
+                aria-label="Buscar"
+              >
+                <Search className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         </div>
 
