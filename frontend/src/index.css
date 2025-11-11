@@ -86,6 +86,16 @@ body {
 .bg-fade-5 { animation: fadeSlot 40s ease-in-out infinite; animation-delay: -32s; will-change: opacity; }
 
 /* Background de Login em telas grandes */
+/* Background de Login em telas pequenas */
+.login-page {
+  background-image: url('./assets/IMG/mobile-loguin-back.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: scroll; /* melhor performance em mobile */
+}
+
+/* Background de Login em telas grandes */
 @media (min-width: 1024px) {
   .login-page {
     background-image: url('./assets/IMG/loguinback2.jpg');
@@ -94,6 +104,15 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
   }
+}
+
+/* Oculta barras de rolagem horizontais sem desativar o gesto de scroll */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 

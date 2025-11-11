@@ -29,7 +29,7 @@ export default function CategoryChips({
 
   return (
     <div
-      className={`flex gap-2 overflow-x-auto whitespace-nowrap -mx-1 px-1 md:flex-wrap md:overflow-visible md:whitespace-normal ${className}`}
+      className={`flex gap-2 overflow-x-auto no-scrollbar whitespace-nowrap -mx-1 px-1 md:flex-wrap md:overflow-visible md:whitespace-normal ${className}`}
       role="group"
       aria-label="Filtrar por categoria"
     >

@@ -53,7 +53,7 @@ export default function Items({ initialStatus = 'all', title = 'Itens do campus'
         </div>
 
         <div className="mt-4 flex flex-col lg:flex-row gap-3">
-          <div className="flex-1 flex gap-2 overflow-x-auto whitespace-nowrap -mx-1 px-1 sm:mx-0 sm:px-0">
+          <div className="flex-1 flex gap-2 overflow-x-auto no-scrollbar whitespace-nowrap -mx-1 px-1 sm:mx-0 sm:px-0">
             {statuses.map(s => (
               <button
                 key={s.id}
