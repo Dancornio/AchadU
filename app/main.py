@@ -1,8 +1,22 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from app.api import items
 
-from app.core.config import settings
-from app.core.db import ASYNC_DATABASE_URL
+app = FastAPI(title="AchadU API")
 
-print("--- Teste de Configuração ---")
-print(f"URL do Banco de Dados: {settings.DATABASE_URL}")
-print(f"URL Assíncrona: {ASYNC_DATABASE_URL}")
-print("--- Configuração carregada com sucesso! ---")
+
+origins = ["http://localhost:5173", "https://achad-u.vercel.app/"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+app.include_router(items.router, prefix="/api")
+
+@app.get("/")
+def read_root():
+    return {"message": "API AchadU Online 🚀"}

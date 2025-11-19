@@ -1,4 +1,5 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Text, Date, Timestamp, func, Enum as SQLAlchemyEnum
+from datetime import datetime
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, Date, func, Enum as SQLAlchemyEnum
 from sqlalchemy.orm import Mapped, mapped_column
 from app.core.db import Base
 import enum
@@ -44,7 +45,7 @@ class Item(Base):
     description: Mapped[str] = mapped_column(Text, nullable=False)
     status: Mapped[ItemStatusEnum] = mapped_column(SQLAlchemyEnum(ItemStatusEnum))
     event_date: Mapped[Date] = mapped_column(Date, nullable=False)
-    reported_at: Mapped[Timestamp] = mapped_column(Timestamp(timezone=True), nullable=False, server_default=func.now())
+    reported_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     item_image_url: Mapped[str] = mapped_column(String(255), nullable=True)
 
     category_id: Mapped[int] = mapped_column(Integer, ForeignKey('categories.id'), nullable=False)
