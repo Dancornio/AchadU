@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, func, Timestamp, Enum as SQLAlchemyEnum
+from sqlalchemy import Column, DateTime, Integer, String, func, Enum as SQLAlchemyEnum
 from sqlalchemy.orm import mapped_column, Mapped
 from app.core.db import Base
 import enum
@@ -17,5 +17,5 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     user_role: Mapped[UserRoleEnum] = mapped_column(SQLAlchemyEnum(UserRoleEnum), nullable=False, default=UserRoleEnum.student_staff)
-    created_at: Mapped[Timestamp] = mapped_column(Timestamp(timezone=True), nullable=False, server_default=func.now())
+    created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     
