@@ -1,25 +1,37 @@
+import bcrypt
 from datetime import datetime, timedelta
 from typing import Optional
-from passlib.context import CryptContext
 from jose import jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.core.config import settings
 from app.models.user_models import User
 
-# Configuração do Hashing de Senha (Bcrypt)
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# --- Funções de Senha (Agora usando bcrypt diretamente) ---
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verifica se a senha em texto plano corresponde ao hash."""
-    return pwd_context.verify(plain_password, hashed_password)
+    """
+    Verifica se a senha em texto plano corresponde ao hash.
+    O bcrypt exige bytes, então convertemos as strings.
+    """
+    return bcrypt.checkpw(
+        plain_password.encode('utf-8'),
+        hashed_password.encode('utf-8')
+    )
 
 def get_password_hash(password: str) -> str:
-    """Gera um hash seguro para a senha."""
-    return pwd_context.hash(password)
+    """
+    Gera um hash seguro para a senha.
+    Retorna uma string para ser salva no banco de dados.
+    """
+    # Gera o salt e o hash
+    hashed_bytes = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    # Decodifica para string para armazenar no banco (PostgreSQL VARCHAR)
+    return hashed_bytes.decode('utf-8')
+
+# --- Funções de Token (JWT) - Permanece igual ---
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
-    """Cria um token JWT com tempo de expiração."""
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -31,21 +43,15 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     return encoded_jwt
 
 async def authenticate_user(db: AsyncSession, email: str, password: str):
-    """
-    Busca um usuário pelo email e verifica a senha.
-    Retorna o objeto User se for válido, ou False/None se falhar.
-    """
     # 1. Busca o usuário no banco de dados
     result = await db.execute(select(User).filter(User.email == email))
     user = result.scalars().first()
 
-    # 2. Se o usuário não existe, retorna False
     if not user:
         return False
     
-    # 3. Se a senha não bate, retorna False
+    # 2. Verifica a senha usando a nova implementação direta
     if not verify_password(password, user.password_hash):
         return False
     
-    # 4. Sucesso! Retorna o usuário
     return user
