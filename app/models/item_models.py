@@ -43,7 +43,7 @@ class Item(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
-    status: Mapped[ItemStatusEnum] = mapped_column(SQLAlchemyEnum(ItemStatusEnum))
+    status: Mapped[ItemStatusEnum] = mapped_column(SQLAlchemyEnum(ItemStatusEnum, name="item_status"), nullable=False, default=ItemStatusEnum.found)
     event_date: Mapped[Date] = mapped_column(Date, nullable=False)
     reported_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     item_image_url: Mapped[str] = mapped_column(String(255), nullable=True)
