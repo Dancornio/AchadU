@@ -15,12 +15,24 @@ class ItemRepository:
         await self.db.refresh(db_item)
         return db_item
 
-    async def get_all(self, status: ItemStatus = None, skip: int = 0, limit: int = 100):
-        query = select(Item).offset(skip).limit(limit)
+
+    async def get_all(self, status: ItemStatus = None, reported_by_id: int = None, skip: int = 0, limit: int = 100):
+        query = select(Item).offset(skip).limit(limit).order_by(Item.reported_at.desc()) # Adicionei order_by para ver os recentes
+        
         if status:
             query = query.where(Item.status == status)
+        if reported_by_id:
+            query = query.where(Item.reported_by_id == reported_by_id)
+            
         result = await self.db.execute(query)
         return result.scalars().all()
+
+    # async def get_all(self, status: ItemStatus = None, skip: int = 0, limit: int = 100):
+    #     query = select(Item).offset(skip).limit(limit)
+    #     if status:
+    #         query = query.where(Item.status == status)
+    #     result = await self.db.execute(query)
+    #     return result.scalars().all()
     
     async def get_by_id(self, item_id: int) -> Item | None:
         query = select (Item).where(Item.id == item_id)

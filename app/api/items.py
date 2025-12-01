@@ -24,7 +24,7 @@ async def list_items(
     db: AsyncSession = Depends(get_db_session)
 ):
     repo = ItemRepository(db)
-    return await repo.get_all(status=status, skip=skip, limit=limit)
+    return await repo.get_all(status=status, reported_by_id=reported_by_id, skip=skip, limit=limit)
 
 @router.get("/items/{item_id}", response_model=ItemResponse)
 async def get_item(

@@ -2,29 +2,39 @@ import ItemCard from './ItemCard';
 import SkeletonItemCard from './SkeletonItemCard';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { db } from '../services/db';
+import { api } from '../services/api'; // <--- Use o novo serviço
+import { db } from '../services/db'; // Mantemos apenas para getLocations (se ainda não tiver endpoint)
 
 export default function RecentFeed() {
   const [items, setItems] = useState(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    const load = () => {
-      const locations = db.getLocations();
-      const arr = db.listItems({ status: 'found', sort: 'recent', limit: 6 });
-      setItems(
-        arr.map(i => ({
+    const load = async () => {
+      try {
+        // Busca apenas itens com status 'found' (encontrados), limite 6
+        const data = await api.getItems({ status: 'found', limit: 6 });
+        
+        // Mapeia os dados da API para o formato do Card
+        const locations = db.getLocations(); // Usando mock para locations por enquanto
+        
+        setItems(data.map(i => ({
           id: i.id,
           title: i.name,
-          location: labelById(locations, i.location_id),
-          time: relativeFromISO(i.reported_at),
-          imageUrl: i.item_image_url ?? null,
-        }))
-      );
+          // Tenta achar o nome do local pelo ID, ou mostra "Desconhecido"
+          location: locations.find(l => l.id === i.location_id)?.name || 'Local ID ' + i.location_id,
+          time: new Date(i.reported_at).toLocaleDateString('pt-BR'),
+          imageUrl: i.item_image_url
+        })));
+      } catch (err) {
+        console.error(err);
+        setError(true);
+      }
     };
     load();
-    const off = db.subscribeItems(load);
-    return off;
   }, []);
+
+  if (error) return <p className="text-center py-10 text-gray-500">Não foi possível carregar os itens recentes.</p>;
 
   return (
     <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10" aria-labelledby="recentes">
@@ -34,23 +44,9 @@ export default function RecentFeed() {
       </div>
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {items
-          ? items.map((it, i) => <ItemCard key={i} {...it} />)
+          ? items.map((it) => <ItemCard key={it.id} {...it} />)
           : Array.from({ length: 6 }).map((_, i) => <SkeletonItemCard key={i} />)}
       </div>
     </section>
   );
-}
-
-function labelById(list, id) {
-  return list.find(x=>x.id===id)?.name ?? '—';
-}
-function relativeFromISO(iso) {
-  const d = new Date(iso);
-  const diffMs = Date.now() - d.getTime();
-  const min = Math.floor(diffMs / 60000);
-  const h = Math.floor(min / 60);
-  const dys = Math.floor(h / 24);
-  if (min < 60) return `há ${min} min`;
-  if (h < 24) return `há ${h} h`;
-  return `há ${dys} d`;
 }

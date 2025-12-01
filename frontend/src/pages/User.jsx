@@ -3,72 +3,139 @@ import Footer from '../components/Footer';
 import { db } from '../services/db';
 import { useEffect, useMemo, useState } from 'react';
 import { User as UserIcon } from 'lucide-react';
+import { api } from '../services/api'
+
+// export default function User() {
+//   const currentUserId = db.getCurrentUserId();
+//   const user = db.getUserById(currentUserId);
+//   const categories = db.getCategories();
+//   const locations = db.getLocations();
+//   const [query, setQuery] = useState('');
+//   const [sort, setSort] = useState('recent');
+//   const [tab, setTab] = useState('reportados'); // reportados | encontrados | reivindicacoes
+//   const [editItem, setEditItem] = useState(null);
+
+//   const [itemsList, setItemsList] = useState(db.listItems());
+//   const [claimsList, setClaimsList] = useState(db.listClaims({ claimantId: currentUserId }));
+//   useEffect(() => {
+//     const loadItems = () => setItemsList(db.listItems());
+//     const loadClaims = () => setClaimsList(db.listClaims({ claimantId: currentUserId }));
+//     loadItems(); loadClaims();
+//     const offItems = db.subscribeItems(loadItems);
+//     const offClaims = db.subscribeClaims(loadClaims);
+//     return () => { offItems(); offClaims(); };
+//   }, [currentUserId]);
+
+//   const myReported = useMemo(() => itemsList.filter(i => i.reported_by_id === currentUserId), [itemsList, currentUserId]);
+//   const myHandled = useMemo(() => itemsList.filter(i => i.handler_id === currentUserId), [itemsList, currentUserId]);
+//   const myClaims = useMemo(() => claimsList, [claimsList]);
+
+//   const filtered = useMemo(() => {
+//     const base = tab === 'reportados' ? myReported : tab === 'encontrados' ? myHandled : myClaims;
+//     const asItems = tab === 'reivindicacoes'
+//       ? myClaims.map(c => ({
+//           id: c.id,
+//           item_id: c.item_id,
+//           name: itemsList.find(i => i.id === c.item_id)?.name ?? 'Item',
+//           status: c.status,
+//           description: c.description,
+//           type: 'claim',
+//           created_at: c.created_at,
+//         }))
+//       : base.map(i => ({ ...i, type: 'item' }));
+//     const q = query.toLowerCase().trim();
+//     const match = i => `${i.name} ${i.description ?? ''}`.toLowerCase().includes(q);
+//     const list = q ? asItems.filter(match) : asItems;
+//     if (sort === 'recent') return list.sort((a,b) => new Date(b.reported_at ?? b.created_at) - new Date(a.reported_at ?? a.created_at));
+//     if (sort === 'status') return list.sort((a,b) => String(a.status).localeCompare(String(b.status)));
+//     return list;
+//   }, [tab, query, sort, myReported, myHandled, myClaims]);
+
+//   return (
+//     <div className="min-h-dvh flex flex-col bg-linear-to-b from-brand/10 via-fuchsia-50 to-white">
+//       <Header />
+//       <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+//         <ProfileHeader user={user} />
+//         <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+//           <div className="lg:col-span-2 space-y-4">
+//             <Tabs tab={tab} setTab={setTab} />
+//             <Controls query={query} setQuery={setQuery} sort={sort} setSort={setSort} onExport={() => exportCSV(filtered)} />
+//             <List data={filtered} onEdit={setEditItem} categories={categories} locations={locations} />
+//           </div>
+//           <div className="space-y-4">
+//             <UserStats items={itemsList} claims={claimsList} />
+//             <Tips />
+//           </div>
+//         </div>
+//       </main>
+//       <Footer />
+//       {editItem && <EditModal item={editItem} onClose={() => setEditItem(null)} />}
+//     </div>
+//   );
+// }
 
 export default function User() {
-  const currentUserId = db.getCurrentUserId();
-  const user = db.getUserById(currentUserId);
-  const categories = db.getCategories();
-  const locations = db.getLocations();
-  const [query, setQuery] = useState('');
-  const [sort, setSort] = useState('recent');
-  const [tab, setTab] = useState('reportados'); // reportados | encontrados | reivindicacoes
-  const [editItem, setEditItem] = useState(null);
+  // 1. Recuperar usuário do Login real (localStorage)
+  const storedUser = JSON.parse(localStorage.getItem('achadu_user') || 'null');
+  
+  const [itemsList, setItemsList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState('reportados'); 
 
-  const [itemsList, setItemsList] = useState(db.listItems());
-  const [claimsList, setClaimsList] = useState(db.listClaims({ claimantId: currentUserId }));
   useEffect(() => {
-    const loadItems = () => setItemsList(db.listItems());
-    const loadClaims = () => setClaimsList(db.listClaims({ claimantId: currentUserId }));
-    loadItems(); loadClaims();
-    const offItems = db.subscribeItems(loadItems);
-    const offClaims = db.subscribeClaims(loadClaims);
-    return () => { offItems(); offClaims(); };
-  }, [currentUserId]);
+    if (!storedUser) return;
 
-  const myReported = useMemo(() => itemsList.filter(i => i.reported_by_id === currentUserId), [itemsList, currentUserId]);
-  const myHandled = useMemo(() => itemsList.filter(i => i.handler_id === currentUserId), [itemsList, currentUserId]);
-  const myClaims = useMemo(() => claimsList, [claimsList]);
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        // Busca itens reportados por ESSE usuário
+        const myItems = await api.getItems({ reported_by_id: storedUser.id });
+        setItemsList(myItems);
+      } catch (error) {
+        console.error("Erro ao carregar itens", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
-  const filtered = useMemo(() => {
-    const base = tab === 'reportados' ? myReported : tab === 'encontrados' ? myHandled : myClaims;
-    const asItems = tab === 'reivindicacoes'
-      ? myClaims.map(c => ({
-          id: c.id,
-          item_id: c.item_id,
-          name: itemsList.find(i => i.id === c.item_id)?.name ?? 'Item',
-          status: c.status,
-          description: c.description,
-          type: 'claim',
-          created_at: c.created_at,
-        }))
-      : base.map(i => ({ ...i, type: 'item' }));
-    const q = query.toLowerCase().trim();
-    const match = i => `${i.name} ${i.description ?? ''}`.toLowerCase().includes(q);
-    const list = q ? asItems.filter(match) : asItems;
-    if (sort === 'recent') return list.sort((a,b) => new Date(b.reported_at ?? b.created_at) - new Date(a.reported_at ?? a.created_at));
-    if (sort === 'status') return list.sort((a,b) => String(a.status).localeCompare(String(b.status)));
-    return list;
-  }, [tab, query, sort, myReported, myHandled, myClaims]);
+  if (!storedUser) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <p>Você precisa fazer login para ver esta página.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Filtragem simples no frontend para as abas
+  const filtered = itemsList; // Por enquanto mostra tudo que ele reportou
 
   return (
     <div className="min-h-dvh flex flex-col bg-linear-to-b from-brand/10 via-fuchsia-50 to-white">
       <Header />
       <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <ProfileHeader user={user} />
+        {/* Passamos o usuário real para o cabeçalho */}
+        <ProfileHeader user={storedUser} />
+        
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
             <Tabs tab={tab} setTab={setTab} />
-            <Controls query={query} setQuery={setQuery} sort={sort} setSort={setSort} onExport={() => exportCSV(filtered)} />
-            <List data={filtered} onEdit={setEditItem} categories={categories} locations={locations} />
+            
+            {/* Lista Real */}
+            {loading ? (
+               <p>Carregando...</p> 
+            ) : (
+               <List data={filtered} locations={db.getLocations()} categories={db.getCategories()} />
+            )}
           </div>
-          <div className="space-y-4">
-            <UserStats items={itemsList} claims={claimsList} />
-            <Tips />
-          </div>
+          {/* ... Stats e Tips ... */}
         </div>
       </main>
       <Footer />
-      {editItem && <EditModal item={editItem} onClose={() => setEditItem(null)} />}
     </div>
   );
 }
