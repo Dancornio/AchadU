@@ -1,9 +1,16 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useState } from 'react';
-import { Home, Grid3x3, HelpCircle, User as UserIcon, Plus, Menu, LogIn, LayoutGrid } from 'lucide-react';
+import { Home, Grid3x3, HelpCircle, User as UserIcon, Plus, Menu, LogIn, LayoutGrid, ShieldCheck } from 'lucide-react';
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  
+  let user = null;
+  try {
+    user = JSON.parse(localStorage.getItem('achadu_user'));
+  } catch {}
+  const isAdmin = user?.user_role === 'admin';
+
   return (
     <header className="sticky top-0 z-50 bg-linear-to-r from-gray-900 via-gray-800 to-gray-900 text-white border-b border-gray-800 backdrop-blur-sm pointer-events-auto">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
@@ -21,6 +28,11 @@ export default function Header() {
           <NavItem to="/itens" label="Itens">
             <LayoutGrid className="h-4 w-4" strokeWidth={2} />
           </NavItem>
+          {isAdmin && (
+            <NavItem to="/admin" label="Admin">
+              <ShieldCheck className="h-4 w-4" strokeWidth={2} />
+            </NavItem>
+          )}
           <NavItem to="/como-funciona" label="Como funciona">
             <HelpCircle className="h-4 w-4" strokeWidth={2} />
           </NavItem>
@@ -55,6 +67,12 @@ export default function Header() {
               <Grid3x3 className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
               <span>Itens</span>
             </NavLink>
+            {isAdmin && (
+              <NavLink to="/admin" onClick={() => setOpen(false)} className={({isActive}) => `h-10 px-3 rounded-lg inline-flex items-center gap-2 border ${isActive? 'bg-linear-to-r from-brand to-indigo-600 text-white shadow-sm border-transparent':'bg-white/10 border-white/20 text-white hover:bg-white/15'}`}>
+                <ShieldCheck className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
+                <span>Admin</span>
+              </NavLink>
+            )}
             <NavLink to="/como-funciona" onClick={() => setOpen(false)} className={({isActive}) => `h-10 px-3 rounded-lg inline-flex items-center gap-2 border ${isActive? 'bg-linear-to-r from-brand to-indigo-600 text-white shadow-sm border-transparent':'bg-white/10 border-white/20 text-white hover:bg-white/15'}`}>
               <HelpCircle className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
               <span>Como funciona</span>

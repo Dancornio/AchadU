@@ -3,6 +3,7 @@ import Footer from '../components/Footer';
 import ItemCard from '../components/ItemCard';
 import CategoryChips from '../components/CategoryChips';
 import { db } from '../services/db';
+import { listItems } from '../services/items';
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Search } from 'lucide-react';
 
@@ -15,27 +16,37 @@ export default function Items({ initialStatus = 'all', title = 'Itens do campus'
   const locations = useMemo(() => db.getLocations(), []);
 
   const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const fetch = useCallback(() => {
-    let arr = db.listItems({ status, categoryId: categoryId === 'all' ? undefined : categoryId });
-    const q = query.toLowerCase().trim();
-    if (q) arr = arr.filter(i => `${i.name} ${i.description ?? ''}`.toLowerCase().includes(q));
-    setList(
-      arr.map(i => ({
-        id: i.id,
-        title: i.name,
-        location: labelById(locations, i.location_id),
-        time: relativeFromISO(i.reported_at),
-        imageUrl: i.item_image_url ?? null,
-      }))
-    );
+  const fetch = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError('');
+      let arr = await listItems({ status });
+      const q = query.toLowerCase().trim();
+      if (q) arr = arr.filter(i => `${i.name} ${i.description ?? ''}`.toLowerCase().includes(q));
+      // filtro de categoria (frontend) caso queira
+      if (categoryId !== 'all') arr = arr.filter(i => String(i.category_id) === String(categoryId));
+      setList(
+        arr.map(i => ({
+          id: i.id,
+          title: i.name,
+          location: labelById(locations, i.location_id),
+          time: relativeFromISO(i.reported_at),
+          imageUrl: i.item_image_url ?? null,
+        }))
+      );
+    } catch (err) {
+      setError(err.message || 'Falha ao carregar itens');
+    } finally {
+      setLoading(false);
+    }
   }, [status, categoryId, query, locations]);
 
   useEffect(() => { fetch(); }, [fetch]);
-  useEffect(() => {
-    const off = db.subscribeItems(() => fetch());
-    return off;
-  }, [fetch]);
+  // Assinaturas locais removidas; itens vêm da API
+  useEffect(() => {}, []);
 
   const statuses = [
     { id: 'all', label: 'Todos' },
@@ -88,10 +99,13 @@ export default function Items({ initialStatus = 'all', title = 'Itens do campus'
           </div>
         </div>
 
+        {error && <p className="mt-4 text-rose-700">{error}</p>}
         <div className="mt-6 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-          {list.length ? list.map(it => (
-            <ItemCard key={it.id} {...it} />
-          )) : (
+          {loading ? (
+            <p className="text-gray-600">Carregando...</p>
+          ) : list.length ? (
+            list.map(it => <ItemCard key={it.id} {...it} />)
+          ) : (
             <p className="text-gray-600">Nenhum item encontrado com os filtros selecionados.</p>
           )}
         </div>

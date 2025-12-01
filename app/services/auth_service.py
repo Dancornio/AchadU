@@ -1,11 +1,14 @@
 import bcrypt
 from datetime import datetime, timedelta
 from typing import Optional
-from jose import jwt
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import jwt, JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+from sqlalchemy import select
 from app.core.config import settings
 from app.models.user_models import User
+from app.core.db import get_db_session
 
 # --- Funções de Senha (Agora usando bcrypt diretamente) ---
 
@@ -55,3 +58,34 @@ async def authenticate_user(db: AsyncSession, email: str, password: str):
         return False
     
     return user
+
+# --- Dependência de usuário atual (Bearer Token) ---
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
+
+async def get_current_user(
+    db: AsyncSession = Depends(get_db_session),
+    token: str = Depends(oauth2_scheme),
+):
+    try:
+        payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        email: str = payload.get("sub")
+        if not email:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
+
+    result = await db.execute(select(User).filter(User.email == email))
+    user = result.scalars().first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Usuário não encontrado")
+    return user
+
+async def get_current_admin_user(
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.user_role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Acesso restrito a administradores"
+        )
+    return current_user

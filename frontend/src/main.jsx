@@ -11,6 +11,7 @@ const ItemDetails = lazy(() => import('./pages/ItemDetails.jsx'));
 const Lost = lazy(() => import('./pages/Lost.jsx'));
 const How = lazy(() => import('./pages/How.jsx'));
 const Login = lazy(() => import('./pages/Login.jsx'));
+const Admin = lazy(() => import('./pages/Admin.jsx'));
 
 registerSW({ immediate: true })
 
@@ -19,6 +20,14 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
+        <Route
+          path="/admin"
+          element={
+            <Suspense fallback={<div className="p-6">Carregando painel...</div>}>
+              <Admin />
+            </Suspense>
+          }
+        />
         <Route
           path="/usuario"
           element={
@@ -71,3 +80,4 @@ createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </StrictMode>
 );
+

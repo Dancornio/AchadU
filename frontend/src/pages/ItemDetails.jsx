@@ -1,14 +1,34 @@
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { db } from '../services/db';
-import { useMemo } from 'react';
+import { getItemById } from '../services/items';
+import { useMemo, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
 export default function ItemDetails() {
   const { id } = useParams();
   const itemId = Number(id);
 
-  const item = useMemo(() => db.listItems().find(i => Number(i.id) === itemId), [itemId]);
+  const [item, setItem] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        setLoading(true);
+        setError('');
+        const data = await getItemById(itemId);
+        if (mounted) setItem(data);
+      } catch (err) {
+        if (mounted) setError(err.message || 'Item não encontrado');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, [itemId]);
   const categories = db.getCategories();
   const locations = db.getLocations();
   const reporter = item ? db.getUserById(item.reported_by_id) : null;
@@ -25,7 +45,11 @@ export default function ItemDetails() {
           <Link to="/itens" className="text-sm text-brand hover:text-brand-dark">Voltar para itens</Link>
         </div>
 
-        {!item ? (
+        {error ? (
+          <p className="mt-6 text-rose-700">{error}</p>
+        ) : loading ? (
+          <p className="mt-6 text-gray-700">Carregando...</p>
+        ) : !item ? (
           <p className="mt-6 text-gray-700">Item não encontrado.</p>
         ) : (
           <section className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">

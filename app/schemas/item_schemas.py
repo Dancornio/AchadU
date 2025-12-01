@@ -29,5 +29,5 @@ class ItemResponse(Itembase):
     reported_at: datetime
     item_image_url: Optional[str] = None
 
-class Config:
-    from_attributes = True
+    class Config:
+        from_attributes = True

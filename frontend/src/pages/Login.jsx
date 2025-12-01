@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { login as apiLogin } from '../services/auth';
+import { login as apiLogin, getToken } from '../services/auth';
+import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, LogIn, Eye, EyeOff, Sparkles, ShieldCheck, Clock, MapPin, ArrowRight, CheckCircle, XCircle } from 'lucide-react';
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,9 +29,14 @@ export default function Login() {
     const res = await apiLogin({ email, password });
     setLoading(false);
     if (res.ok) {
-      if (res.token) localStorage.setItem('achadu_token', res.token);
-      if (res.user) localStorage.setItem('achadu_user', JSON.stringify(res.user));
+      // token é persistido pelo serviço (achadu-token)
+      if (res.user) try { localStorage.setItem('achadu_user', JSON.stringify(res.user)); } catch {}
       setMessage({ type: 'success', text: 'Login realizado com sucesso.' });
+      // Redireciona após breve delay
+      setTimeout(() => {
+        const t = getToken();
+        if (t) navigate('/itens');
+      }, 300);
     } else {
       setMessage({ type: 'error', text: res.error || 'Não foi possível entrar. Verifique suas credenciais.' });
     }
@@ -160,7 +167,7 @@ export default function Login() {
 
               <a
                 href="/como-funciona"
-                className="mt-6 group inline-flex items-center gap-2 h-11 px-4 rounded-2xl border border-gray-200 bg-white/70 text-gray-900 shadow-sm transform transition-all duration-200 hover:bg-white hover:shadow-md hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+                className="mt-6 group inline-flex items-center gap-2 h-11 px-4 rounded-2xl border border-gray-200 bg-white/70 text-gray-900 shadow-sm transform transition-all duration-200 hover:bg-white hover:shadow-md hover:-translate-y-px active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
               >
                 Conheça como funciona
                 <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />

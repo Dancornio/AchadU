@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { db, ItemStatus } from '../services/db';
+import { uploadImage, createItem } from '../services/items';
+import { getToken } from '../services/auth';
 import CategoryChips from '../components/CategoryChips';
 import { X } from 'lucide-react';
 
@@ -8,14 +10,20 @@ export default function ReportFoundModal({ onClose }) {
   const locations = db.getLocations();
   const currentUserId = db.getCurrentUserId();
   const [form, setForm] = useState({ name: '', description: '', category_id: categories[0]?.id ?? 1, location_id: locations[0]?.id ?? 1, event_date: '' });
+  const [file, setFile] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (!form.event_date) return alert('Informe a data do evento');
     try {
       setSaving(true);
-      db.createItem({
+      const token = getToken();
+      let imageUrl = null;
+      if (file) {
+        imageUrl = await uploadImage(file, token);
+      }
+      await createItem({
         name: form.name,
         description: form.description,
         status: ItemStatus.found,
@@ -24,7 +32,8 @@ export default function ReportFoundModal({ onClose }) {
         reported_by_id: currentUserId,
         handler_id: currentUserId,
         event_date: form.event_date,
-      });
+        item_image_url: imageUrl,
+      }, token);
       onClose?.();
     } catch (err) {
       alert(err.message || 'Erro ao criar item');
@@ -70,6 +79,10 @@ export default function ReportFoundModal({ onClose }) {
           <label className="block">
             <span className="text-sm text-gray-700">Descrição</span>
             <textarea className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2" rows={3} value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))} />
+          </label>
+          <label className="block">
+            <span className="text-sm text-gray-700">Imagem do item</span>
+            <input type="file" accept="image/*" className="mt-1 w-full" onChange={(e)=>setFile(e.target.files?.[0] ?? null)} />
           </label>
           <div className="flex justify-end gap-2">
             <button type="button" onClick={onClose} className="h-10 px-3 rounded-lg border border-gray-200">Cancelar</button>

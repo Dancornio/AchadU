@@ -7,3 +7,5 @@ python-dotenv
 asyncpg
 bcrypt
 python-jose[cryptography]
+cloudinary
+python-multipart

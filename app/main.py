@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import auth, items
+from app.api import auth, items, upload, admin
 
 app = FastAPI(title="AchadU API")
 
@@ -16,6 +16,8 @@ app.add_middleware(
 
 app.include_router(auth.router, prefix="/api")
 app.include_router(items.router, prefix="/api")
+app.include_router(upload.router, prefix="/api")
+app.include_router(admin.router, prefix="/api")
 
 @app.get("/")
 def read_root():
