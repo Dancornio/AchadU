@@ -1,7 +1,7 @@
 // frontend/src/services/api.js
 
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://listatelefonica-9cr4.onrender.com';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 // Função auxiliar para pegar o token salvo
 function getHeaders() {

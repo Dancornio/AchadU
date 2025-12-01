@@ -5,7 +5,7 @@ from app.api import auth, items, upload, admin
 app = FastAPI(title="AchadU API")
 
 
-origins = ["http://localhost:5173", "https://achad-u.vercel.app/"]
+origins = ["http://localhost:5173", "https://achad-u.vercel.app"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
