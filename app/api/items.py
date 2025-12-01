@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import List, Optional
 
 from app.core.db import get_db_session
 from app.schemas.item_schemas import ItemCreate, ItemResponse, ItemStatus
@@ -19,6 +19,7 @@ async def create_item(
 @router.get("/items", response_model=List[ItemResponse])
 async def list_items(
     status: ItemStatus = None,
+    reported_by_id: Optional[int] = None,
     skip: int = 0, 
     limit: int = 50, 
     db: AsyncSession = Depends(get_db_session)
