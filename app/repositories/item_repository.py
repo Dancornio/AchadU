@@ -1,4 +1,4 @@
-from select import select
+from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.item_models import Item
 from app.schemas.item_schemas import ItemCreate, ItemStatus
@@ -23,6 +23,6 @@ class ItemRepository:
         return result.scalars().all()
     
     async def get_by_id(self, item_id: int) -> Item | None:
-        query = select(Item).where(Item.id == item_id)
+        query = select (Item).where(Item.id == item_id)
         result = await self.db.execute(query)
         return result.scalars().first() 
