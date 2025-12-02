@@ -1,4 +1,4 @@
-import { Grip, Package, Key, Laptop, Book } from 'lucide-react';
+import { Grip, Package, Key, Laptop, Book, Layers } from 'lucide-react';
 
 const palette = {
   all: { idle: 'bg-slate-100 text-slate-700', active: 'bg-gradient-to-r from-slate-700 to-gray-900 text-white' },
@@ -6,9 +6,10 @@ const palette = {
   2: { idle: 'bg-amber-50 text-amber-800', active: 'bg-gradient-to-r from-amber-600 to-orange-600 text-white' },
   3: { idle: 'bg-violet-50 text-violet-700', active: 'bg-gradient-to-r from-violet-600 to-purple-600 text-white' },
   4: { idle: 'bg-emerald-50 text-emerald-700', active: 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white' },
+  5: { idle: 'bg-gray-50 text-gray-700', active: 'bg-gradient-to-r from-gray-600 to-slate-600 text-white' },
 };
 
-const icons = { all: Grip, 1: Package, 2: Key, 3: Laptop, 4: Book };
+const icons = { all: Grip, 1: Package, 2: Key, 3: Laptop, 4: Book, 5: Layers };
 
 export default function CategoryChips({
   categories,

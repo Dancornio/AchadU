@@ -21,7 +21,15 @@ const initial = {
   currentUserId: seedCurrentUserId,
 };
 
-let store = loadStore() ?? initial;
+let store = loadStore();
+
+if (!store) {
+  store = initial;
+} else {
+  // Em ambiente de desenvolvimento/mock, forçamos a atualização das categorias
+  // para garantir que novas categorias adicionadas ao código apareçam
+  store.categories = seedCategories.slice();
+}
 
 function persist() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch (e) { /* ignore */ }
